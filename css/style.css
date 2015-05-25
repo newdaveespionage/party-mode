@@ -718,6 +718,13 @@ html.theme_1 svg rect.equal {
   stroke-width: 0;
 }
 
+svg rect.equal {
+  -webkit-transition: opacity 1.5s ease-in-out;
+     -moz-transition: opacity 1.5s ease-in-out;
+       -o-transition: opacity 1.5s ease-in-out;
+          transition: opacity 1.5s ease;  
+}
+
 svg .isoco {
   stroke-width: 0;
 }
@@ -972,6 +979,62 @@ html.theme_5 .hexagon:nth-of-type(odd), html.theme_5 .hexagon:nth-of-type(3n), h
 html.theme_5 .graticule {
   fill: none;
   stroke: #594F4F;
+  stroke-dasharray: 5px;
+  opacity: 1;
+}
+
+/* THEME 6 STUFF - http://www.colourlovers.com/palette/3771576/What_Do_You_Want */
+
+html.theme_6 .i {
+  color: black;
+}
+
+html.theme_6 .progressBar {
+  background-color: black;
+}
+
+html.theme_6 {
+  background-color: #8D3858;
+}
+
+html.theme_6 svg circle, html.theme_6 svg path, html.theme_6 svg rect, html.theme_6 svg line {
+  fill: #14D8CA;
+  stroke: white; 
+  stroke-width: 1;
+  opacity: .5;
+}
+
+html.theme_6 svg circle:nth-last-of-type(3) {
+  fill: #F8F3E7;
+}
+
+html.theme_6 svg .isoco {
+  stroke-width: 0;
+  opacity: .7;
+}
+
+html.theme_6 svg .isoco:nth-of-type(odd) {
+  fill: #F8B357;
+}
+
+html.theme_6 svg rect.equal {
+  opacity: 1;
+  stroke-width: 0;
+  transform: skewY(45deg);
+}
+
+html.theme_6 .hexagon {
+  stroke-width: 50px;
+  stroke-dasharray: 3px;
+}
+
+html.theme_6 .hexagon:nth-of-type(odd), html.theme_6 .hexagon:nth-of-type(3n), html.theme_6 .hexagon:nth-of-type(3n+1), html.theme_6 .hexagon:nth-of-type(7n), html.theme_6 .hexagon:nth-of-type(11n) {
+  display: none;
+}
+
+html.theme_6 .graticule {
+  fill: none;
+  stroke: #F66653;
   stroke-dasharray: 5px;
   opacity: 1;
 }

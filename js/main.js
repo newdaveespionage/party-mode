@@ -19,7 +19,7 @@
 			//playlist: ['forgot.mp3', 'chaos.mp3', 'stop.mp3', 'bless.mp3', 'benares.mp3', 'radio.mp3', 'selftanner.mp3', 'startshootin.mp3', 'track1.mp3', 'holdin.m4a', 'waiting.mp3', 'dawn.mp3', 'analog.mp3', 'settle.mp3', 'crackers.mp3', 'nuclear.mp3', 'madness.mp3', 'magoo.mp3', 'around.mp3', 'where.mp3', 'bird.mp3', 'notes.mp3'],
 			//playListLinks: ['https://soundcloud.com/mononome', 'https://soundcloud.com/sixfingerz/sixfingerz-out-of-chaos-sttb', 'http://odesza.com/', 'https://soundcloud.com/keithkenniff', 'http://www.holbaumann.com/', 'http://www.holbaumann.com/', 'http://www.blackmothsuperrainbow.com/', 'http://www.littlepeoplemusic.com/', 'https://en.wikipedia.org/wiki/The_1UP_Show', 'https://soundcloud.com/hermitude/holdin-on-hermitude-remix', 'https://soundcloud.com/ceiling_fan', 'http://www.iamsirch.com/', 'http://prettylightsmusic.com/', 'https://soundcloud.com/saycet'],
 			// example playlist
-			playlist: ['dawn.mp3', 'forgot.mp3'],
+			playlist: ['Bed_Head.mp3', 'Release.mp3', 'bd_hd.mp3', 'Rain_Gate.mp3'],
 			playListLinks: ['http://www.iamsirch.com/', 'https://soundcloud.com/mononome'],
 			width : $(document).width(),
 			height : $(document).height(),
@@ -36,7 +36,7 @@
 			hud: 1,														// is hud visible?
 			active: null,												// active visualization (string)
 			vizNum: 0,													// active visualization (index number)
-			thumbs_init: [0,0,0,0,0,0,0,0],								// are thumbnails initialized?
+			thumbs_init: [0,0,0,0,0,0,0,0,0],								// are thumbnails initialized?
 			theme: 0, 													// default color palette
 			currentSong : 0,											// current track
 
@@ -156,6 +156,7 @@
 		Mousetrap.bind('6', function() { State.trigger = 'spin'; });
 		Mousetrap.bind('7', function() { State.trigger = 'hexbin'; });
 		Mousetrap.bind('8', function() { State.trigger = 'voronoi'; });
+		Mousetrap.bind('9', function() { State.trigger = 'spiral'; });
 
 		Mousetrap.bind('up', function() { h.vizChange(State.vizNum-1); });
 		Mousetrap.bind('down', function() { h.vizChange(State.vizNum+1); });
@@ -477,6 +478,10 @@
 			  	State.vizNum = 7;
 			  	r.voronoi();
 			  	break;
+			  case "spiral": case 8:
+			  	State.vizNum = 8;
+			  	r.spiral();
+			  	break;
 			  default:
 			  	State.vizNum = 0;
 			    r.circle();
@@ -587,7 +592,32 @@
 	  	}
 	  	//console.log(copy);
 	  	return copy;
-		};	
+		};
+	c.shuffle_array = function(array){
+		// http://bost.ocks.org/mike/shuffle/
+		var m = array.length, t, i;
+
+		// While there remain elements to shuffle…
+		while (m) {
+
+			// Pick a remaining element…
+			i = Math.floor(Math.random() * m--);
+
+			// And swap it with the current element.
+			t = array[m];
+			array[m] = array[i];
+			array[i] = t;
+		}
+
+		return array;
+		}
+
+	c.rotate_array = function(array, amount){
+		for(;amount--;){
+			array.unshift(array.pop());
+		}
+	}
+
 	root.Compute = c;
 
 	// rendering svg based on normalized waveform data //////////////////////////////////////////////
@@ -724,11 +754,7 @@
 
 	  		var time = Date.now() - t0;
 			var xx = c.total()/100;
-			var style = '';
-			for (var i = 0; i < State.vendors.length; i++) {
-				style += State.vendors[i]+"transform: scale("+xx+","+xx+"); ";
-			}
-			$('body > svg path').attr("style", style);
+			h.applyStyles("body > svg path","transform: scale("+xx+","+xx+"); ");
 			//$('body > svg path').attr("style", "transform: skew("+xx+"deg,"+xx+"deg)");
 
 	  		// 1
@@ -823,11 +849,7 @@
 
 			var xx_t0 = c.total()/100;
 	  		var time_t0 = Date.now() - t0_thumb;
-			var style = '';
-			for (var i = 0; i < State.vendors.length; i++) {
-				style += State.vendors[i]+"transform: scale("+xx_t0+","+xx_t0+"); ";
-			}
-			$('#icosahedron svg path').attr("style", style);
+	  		h.applyStyles("#icosahedron svg path","transform: scale("+xx_t0+","+xx_t0+"); ")
 
 			projection_thumb.rotate([time_t0 * velocity_thumb[0], time_t0 * velocity_thumb[1]]);
 
@@ -1036,11 +1058,25 @@
 		}
 
 		$('body > svg').empty();
-		var marginX = Math.floor(State.width/10);
-		var marginY = Math.floor(State.height/10);
+		var marginX = Math.floor(State.width/20);
+		var marginY = Math.floor(State.height/20);
 		var w = Math.floor((State.width - marginX*2)/21);
 
-	 	WAVE_DATA = c.normalize_binned(50);
+		root.arrayShift = root.arrayShift || 0;
+		root.arrayDir = root.arrayDir || 1;
+	 	WAVE_DATA = c.normalize_binned(45,1,0).slice(2);
+	 	is_maxed = arrayShift == WAVE_DATA.length*2;
+	 	is_minned = arrayShift == 0;
+		if(arrayDir > 0 && is_maxed){
+			arrayShift = 0;	
+			arrayDir = -1;
+		}
+		if(is_minned) arrayDir = 1;
+ 		arrayShift = arrayShift+arrayDir;
+		c.rotate_array(WAVE_DATA,arrayShift);
+		WAVE_DATA_R = WAVE_DATA.slice();
+		WAVE_DATA = WAVE_DATA.concat(WAVE_DATA_R.reverse())
+// 		console.log(WAVE_DATA);
 
 		var x = d3.scale.linear()
 			.domain([0, WAVE_DATA.length])
@@ -1049,6 +1085,10 @@
 		var y = d3.scale.linear()
 			.domain([0, 1])
 			.range([0,State.height-marginY*3]);
+
+		var z = d3.scale.linear()
+		    .domain([0, 1])
+		    .range([0, 360]);
 
 		var opacity = d3.scale.sqrt()
 		    .domain([0, 1])
@@ -1059,10 +1099,11 @@
 
 		squares.enter()
 			.append("g")
-			    .attr("transform", function(d,i) { return "translate(" + ((i*w)+marginX) + "," + ((State.height/2)-(y(d)/2)) + ")"; })
+			    .attr("transform", function(d,i) { return "translate(" + (((i*w)+marginX)) + "," + ((State.height/2)-(y(d)/2)) + ")"; })
 			    .attr("opacity", function(d) { return opacity(d); })
 			.append("rect")
 			    .attr("class", "equal")
+			    .style("fill", function(d) { return d3.hsl(z(d), 1, .5); })
 			    .attr("width", w-7 +'px')
 			    .attr("height", function(d,i) { return y(d) + "px" });
 
@@ -1338,7 +1379,55 @@
 		  return "M" + d.join("L") + "Z";
 		};
 
-		};
+	};
+
+	r.spiral = function(){
+
+		if (State.active == 'spiral') {
+			redraw();
+			return;
+		}
+
+		State.active = 'spiral';
+		width = State.width;
+		height = State.height;
+
+		var n = 22,
+			m = 30,
+			r = 3,
+			dr = 20,
+			g = 137.5 * Math.PI / 180;
+		var svg = d3.select("body").append("svg")
+			.attr("width", width)
+			.attr("height", height)
+			.style("background", "#d1d1d1")
+			.append("g")
+			.attr("transform", "translate(" + [width / 2, height / 2] + ")");
+		var data = [];
+		for (var r = 1; r <= n; r++) {
+			for (var ø = 0; ø < Math.PI * 2; ø += 2 * Math.PI / m) {
+				data.push({r: r, ø: ø});
+			}
+		}
+		var seeds = svg.selectAll("circle")
+			.data(data)
+			.enter().append("circle")
+			.attr("cx", function(d) { return d.r * d.r * Math.cos(d.ø + g * d.r); })
+			.attr("cy", function(d) { return d.r * d.r * Math.sin(d.ø + g * d.r); })
+			.attr("fill", "#000")
+			.attr("fill-opacity", 0.3);
+
+		function redraw(){
+			d3.timer(function(t) {
+				seeds.attr("r", function(d) { return 0.3 * (Math.sin(t / 2000) + 1) * Math.pow(d.r, 2); });
+			});
+		}
+	};
+
+	r.spiral_thumb = function(){
+
+	};
+
 	root.Render = r;
 
 	// helper methods ///////////////////////////////////////////////////////////////////////////////
@@ -1690,8 +1779,8 @@
 
 	h.themeChange = function(n) {
 		n = +n;
-		n  = (n<0) ? 5 : n;
-		n  = (n>5) ? 0 : n;
+		n  = (n<0) ? 6 : n;
+		n  = (n>6) ? 0 : n;
 		State.theme = n;
 
 		console.log('h.themeChange:'+n);
@@ -1816,6 +1905,16 @@
 			return;
 		}
 		console.log('\n'+JSON.stringify(JSON.parse(x),null, 4));
+		};
+	h.applyStyles = function(selector, styleToApply){
+		if(typeof selector == undefined) return;
+		if(typeof styleToApply == undefined) return;
+
+		var style = '';
+		for (var i = 0; i < State.vendors.length; i++) {
+			style += State.vendors[i]+ styleToApply;
+		}
+		$(selector).attr("style", style);
 		};
 	root.Helper = h;
 
