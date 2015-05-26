@@ -613,6 +613,7 @@
 		}
 
 	c.rotate_array = function(array, amount){
+		if(amount>array.length || amount>array.length) return;
 		for(;amount--;){
 			array.unshift(array.pop());
 		}
@@ -1054,33 +1055,56 @@
 	r.equal = function() {
 
 		if (State.active != 'equal') {
-			State.active = 'equal';
+			root.arrayShift = 0;
+			root.arrayDir = 1;
+			root.rotationIndex = 0;
+			root.rotationIndex2 = 0;
+			State.active = 'equal';			
 		}
 
 		$('body > svg').empty();
-		var marginX = Math.floor(State.width/20);
+		var marginX = Math.floor(State.width/42);
 		var marginY = Math.floor(State.height/20);
-		var w = Math.floor((State.width - marginX*2)/21);
+		var w = Math.floor((State.width - marginX*2)/42);
 
-		root.arrayShift = root.arrayShift || 0;
-		root.arrayDir = root.arrayDir || 1;
-	 	WAVE_DATA = c.normalize_binned(45,1,0).slice(2);
-	 	is_maxed = arrayShift == WAVE_DATA.length*2;
+	 	BASE_WAVE_DATA = c.normalize_binned(45,1,0).slice(2);
+		if(rotationIndex>359){
+			rotationIndex = 0;
+		}else{
+			rotationIndex = rotationIndex + 1;
+		}
+		if(rotationIndex2>100){
+			rotationIndex2 = 0;
+		}else{
+			rotationIndex2 = rotationIndex2 + 1;
+		}
+
+		WAVE_DATA_R = BASE_WAVE_DATA.slice().reverse();
+		WAVE_DATA = BASE_WAVE_DATA.concat(WAVE_DATA_R)
+	 	is_maxed = arrayShift == WAVE_DATA.length;
 	 	is_minned = arrayShift == 0;
 		if(arrayDir > 0 && is_maxed){
-			arrayShift = 0;	
-			arrayDir = -1;
+			// DO NOT ENABLE BOTH arrayDir and arrayShift at the same time below
+			// It will cause a cpu freeze. 
+			
+			// enable this to create ping-pong
+// 			arrayDir = -1;
+			// enable this to create continuous rotation
+			arrayShift = 0;
 		}
 		if(is_minned) arrayDir = 1;
  		arrayShift = arrayShift+arrayDir;
+
+ 		// rotate array indexes to create shifting effect
 		c.rotate_array(WAVE_DATA,arrayShift);
-		WAVE_DATA_R = WAVE_DATA.slice();
-		WAVE_DATA = WAVE_DATA.concat(WAVE_DATA_R.reverse())
+
 // 		console.log(WAVE_DATA);
 
 		var x = d3.scale.linear()
 			.domain([0, WAVE_DATA.length])
 			.range([marginX, State.width-marginX]);
+
+// 		console.log(WAVE_DATA.length, marginX, State.width-marginX);
 
 		var y = d3.scale.linear()
 			.domain([0, 1])
@@ -1104,7 +1128,10 @@
 			.append("rect")
 			    .attr("class", "equal")
 			    .style("fill", function(d) { return d3.hsl(z(d), 1, .5); })
-			    .attr("width", w-7 +'px')
+			    .style("content", function(d,i) { return i})
+			    .style("color", "#000")
+			    .style("transform", function(d){ return "skew(" + (rotationIndex2*0.001) + "deg" + ", " + rotationIndex + "deg)"})
+			    .attr("width", w-10 +'px')
 			    .attr("height", function(d,i) { return y(d) + "px" });
 
 		squares.exit().remove();
