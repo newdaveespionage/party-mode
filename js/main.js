@@ -1063,9 +1063,9 @@
 		}
 
 		$('body > svg').empty();
-		var marginX = Math.floor(State.width/42);
+		var marginX = Math.floor(State.width/20);
 		var marginY = Math.floor(State.height/20);
-		var w = Math.floor((State.width - marginX*2)/42);
+		var w = Math.floor((State.width - marginX*2)/20);
 
 	 	BASE_WAVE_DATA = c.normalize_binned(45,1,0).slice(2);
 		if(rotationIndex>359){
