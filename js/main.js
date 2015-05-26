@@ -1100,6 +1100,7 @@
 
 // 		console.log(WAVE_DATA);
 
+		// TODO: why is display only showing a portion of WAVE_DATA.length?
 		var x = d3.scale.linear()
 			.domain([0, WAVE_DATA.length])
 			.range([marginX, State.width-marginX]);
@@ -1128,13 +1129,25 @@
 			.append("rect")
 			    .attr("class", "equal")
 			    .style("fill", function(d) { return d3.hsl(z(d), 1, .5); })
-			    .style("content", function(d,i) { return i})
-			    .style("color", "#000")
 			    .style("transform", function(d){ return "skew(" + (rotationIndex2*0.001) + "deg" + ", " + rotationIndex + "deg)"})
 			    .attr("width", w-10 +'px')
 			    .attr("height", function(d,i) { return y(d) + "px" });
 
+
 		squares.exit().remove();
+
+		// TODO: get shadow/echo rects working
+		// root.squares2 = svg.selectAll("rect")
+		// 	.data(WAVE_DATA, function(d) {return d;});
+
+		// squares2.enter()
+		// 	.append("rect")
+		// 	    .attr("transform", function(d,i) { return "translate(" + (((i*w)+marginX)) + "," + ((State.height/2)) + ")"; })
+		// 	    .attr("opacity", function(d) { return opacity(d); })
+		// 		.attr("width", w+'px')
+		// 		.attr("height", State.height/2+'px');
+
+		// squares2.exit().remove();
 
 		};
 	r.equal_thumb = function() {
