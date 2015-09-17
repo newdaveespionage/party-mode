@@ -38,6 +38,7 @@
 			vizNum: 0,													// active visualization (index number)
 			thumbs_init: [0,0,0,0,0,0,0,0,0],								// are thumbnails initialized?
 			theme: 0, 													// default color palette
+			background: 0,												// default background
 			currentSong : 0,											// current track
 
 			soundCloudURL: null,
@@ -162,6 +163,7 @@
 		Mousetrap.bind('down', function() { h.vizChange(State.vizNum+1); });
 		Mousetrap.bind('left', function() { h.themeChange(State.theme-1); });
 		Mousetrap.bind('right', function() { h.themeChange(State.theme+1); });
+		Mousetrap.bind('b', function() { h.backgroundChange(State.background+1); });
 
 		};
 
@@ -1821,16 +1823,35 @@
 		n = +n;
 		n  = (n<0) ? 6 : n;
 		n  = (n>6) ? 0 : n;
+		var name = function(n){
+			return 'theme_'+n;
+		}
+		$('html').removeClass(name(State.theme)); 
 		State.theme = n;
 
 		console.log('h.themeChange:'+n);
-		var name = 'theme_'+n;
-		$('html').attr('class',name); 
+		$('html').addClass(name(n)); 
 
 		$('.dotstyle li.current').removeClass('current');
 		$('.dotstyle li:eq('+n+')').addClass('current');
 
 		};
+
+	h.backgroundChange = function(n){
+		if(isNaN(n)) n = 0;
+		n = +n;
+		n  = (n<0) ? 9 : n;
+		n  = (n>9) ? 0 : n;
+		var name = function(n){
+			return 'background_'+n;
+		}
+		console.log('h.backgroundChange:'+n);
+		$('html').removeClass(name(State.background));
+		State.background = n;
+
+		$('html').addClass(name(n));
+	}
+
 	h.vizChange = function(n) {
 		n  = (n<0) ? 6 : n;
 		n  = (n>6) ? 0 : n;
@@ -1849,6 +1870,7 @@
 		State.changeInterval = setInterval(function(){
 	    	h.themeChange(Math.floor(Math.random() * 6));
 	    	h.vizChange(Math.floor(Math.random() * 8));
+	    	h.backgroundChange(Math.floor(Math.random() * 10));
 		},toggle);
 
 		if (toggle == null)

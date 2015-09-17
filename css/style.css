@@ -10,6 +10,10 @@ html {
      -moz-transition: background-color 0.5s ease;
        -o-transition: background-color 0.5s ease;
           transition: background-color 0.5s ease;
+  -webkit-transition: background-image 0.5s ease;
+     -moz-transition: background-image 0.5s ease;
+       -o-transition: background-image 0.5s ease;
+          transition: background-image 0.5s ease;
 }
 
 body {
@@ -1441,6 +1445,66 @@ button {
 }
 
 /* /////////////////// */
+/* BACKGROUNDS //// */
+/* /////////////////////////////////////////////////////////////////////////////////////////////// */
+@keyframes animatedBackground {
+  from { background-position: 0 0; }
+  to { background-position: 100% 100%; }
+}
+
+@keyframes zoomBackground {
+  from {transform: scale(1, 1)}
+  to {transform: scale(1.1, 1.1)}
+}
+
+.background {
+  background-position: 0px 0px;
+  background-repeat: repeat;
+  animation: animatedBackground 40s ease-in infinite;
+  animation-direction: alternate;
+}
+
+.background_0 {
+  background-image: url('../img/bg/0.jpg');
+}
+
+.background_1 {
+  background-image: url('../img/bg/1.jpg');
+}
+
+.background_2 {
+  background-image: url('../img/bg/2.jpg');
+}
+
+.background_3 {
+  background-image: url('../img/bg/3.jpg');
+}
+
+.background_4 {
+  background-image: url('../img/bg/4.jpg');
+}
+
+.background_5 {
+  background-image: url('../img/bg/5.jpg');
+}
+
+.background_6 {
+  background-image: url('../img/bg/6.jpg');
+}
+
+.background_7 {
+  background-image: url('../img/bg/7.jpg');
+}
+
+.background_8 {
+  background-image: url('../img/bg/8.jpg');
+}
+
+.background_9 {
+  background-image: url('../img/bg/9.jpg');
+}
+
+/* /////////////////// */
 /* UNSORTED STUFF //// */
 /* /////////////////////////////////////////////////////////////////////////////////////////////// */
 
@@ -1466,3 +1530,4 @@ html.theme_1 svg line {
   stroke: #fff; 
   stroke-width: 2px;
 }
+
